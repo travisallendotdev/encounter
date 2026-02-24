@@ -1,6 +1,7 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { migrate } from './db/migrate.js'
+import auth from './routes/auth.js'
 
 migrate()
 
@@ -9,6 +10,8 @@ const app = new Hono()
 app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
+
+app.route('/api/auth', auth)
 
 serve({
   fetch: app.fetch,

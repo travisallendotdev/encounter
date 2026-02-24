@@ -48,6 +48,16 @@ Started: Tue Feb 24 01:20:20 PST 2026
   - Pattern: SELECT after INSERT to get server-generated defaults (e.g., created_at)
 ---
 
+## 2026-02-24 - US-007
+- Added POST /api/encounters/:id/monsters, GET /api/encounters/:id/monsters, DELETE /api/encounters/:id/monsters/:monsterId to encounters.ts
+- POST creates individual monster instances; quantity > 1 produces "Name N" encounterInstanceName, quantity = 1 keeps base name
+- Both POST and DELETE check encounter is in 'draft' status (400 otherwise); 404 if encounter not found/not owned
+- **Learnings for future iterations:**
+  - Monster sequential naming: if quantity > 1, append " N" suffix; if quantity = 1, use plain name
+  - DM ownership verified via JOIN campaigns on all encounter queries
+  - DELETE returns 204 with null body (c.body(null, 204))
+---
+
 ## 2026-02-24 - US-006
 - Added POST /api/campaigns/:id/encounters and GET /api/campaigns/:id/encounters to campaigns.ts
 - Created src/routes/encounters.ts with GET /api/encounters/:id (includes monsters and pcs)

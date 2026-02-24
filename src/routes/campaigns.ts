@@ -46,4 +46,50 @@ campaigns.get('/:id', (c) => {
   return c.json({ id: row.id, name: row.name, dmId: row.dm_id, createdAt: row.created_at })
 })
 
+campaigns.post('/:id/pcs', async (c) => {
+  const dm = c.get('dm')
+  const campaignId = c.req.param('id')
+
+  const campaign = db.prepare('SELECT id FROM campaigns WHERE id = ? AND dm_id = ?').get(campaignId, dm.id)
+  if (!campaign) {
+    return c.json({ error: 'Not found' }, 404)
+  }
+
+  const body = await c.req.json().catch(() => null)
+  const name = body?.name
+  const playerName = body?.playerName
+
+  if (!name || typeof name !== 'string' || name.trim() === '') {
+    return c.json({ error: 'name is required' }, 400)
+  }
+  if (!playerName || typeof playerName !== 'string' || playerName.trim() === '') {
+    return c.json({ error: 'playerName is required' }, 400)
+  }
+
+  const id = randomUUID()
+  db.prepare('INSERT INTO pcs (id, name, player_name, campaign_id) VALUES (?, ?, ?, ?)').run(id, name.trim(), playerName.trim(), campaignId)
+
+  const pc = db.prepare('SELECT id, name, player_name, campaign_id FROM pcs WHERE id = ?').get(id) as {
+    id: string; name: string; player_name: string; campaign_id: string
+  }
+
+  return c.json({ id: pc.id, name: pc.name, playerName: pc.player_name, campaignId: pc.campaign_id }, 201)
+})
+
+campaigns.get('/:id/pcs', (c) => {
+  const dm = c.get('dm')
+  const campaignId = c.req.param('id')
+
+  const campaign = db.prepare('SELECT id FROM campaigns WHERE id = ? AND dm_id = ?').get(campaignId, dm.id)
+  if (!campaign) {
+    return c.json({ error: 'Not found' }, 404)
+  }
+
+  const rows = db.prepare('SELECT id, name, player_name, campaign_id FROM pcs WHERE campaign_id = ?').all(campaignId) as {
+    id: string; name: string; player_name: string; campaign_id: string
+  }[]
+
+  return c.json(rows.map(r => ({ id: r.id, name: r.name, playerName: r.player_name, campaignId: r.campaign_id })))
+})
+
 export default campaigns

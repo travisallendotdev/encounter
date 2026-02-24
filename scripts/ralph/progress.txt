@@ -37,6 +37,17 @@ Started: Tue Feb 24 01:20:20 PST 2026
   - Exclude public routes from middleware via conditional check in `app.use('*', ...)` wrapper (path + method check)
 ---
 
+## 2026-02-24 - US-004
+- Created src/routes/campaigns.ts with POST /, GET /, GET /:id
+- POST creates campaign associated with authenticated DM (from context), returns camelCase fields
+- GET / returns all campaigns for the DM; GET /:id returns 404 if not found or not owned
+- Updated src/index.ts to register campaigns route at /api/campaigns
+- **Learnings for future iterations:**
+  - DB columns are snake_case (dm_id, created_at); map to camelCase (dmId, createdAt) in responses
+  - Route handlers typed with `new Hono<{ Variables: Variables }>()` for c.get('dm') access
+  - Pattern: SELECT after INSERT to get server-generated defaults (e.g., created_at)
+---
+
 ## 2026-02-24 - US-002
 - Created src/routes/auth.ts with POST /api/auth/login
 - Uses crypto.randomUUID() for UUID generation (built-in Node.js)

@@ -2,6 +2,7 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { migrate } from './db/migrate.js'
 import auth from './routes/auth.js'
+import campaigns from './routes/campaigns.js'
 import { authMiddleware } from './middleware/auth.js'
 import type { Variables } from './types.js'
 
@@ -21,6 +22,7 @@ app.get('/', (c) => {
 })
 
 app.route('/api/auth', auth)
+app.route('/api/campaigns', campaigns)
 
 serve({
   fetch: app.fetch,

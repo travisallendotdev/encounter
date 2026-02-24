@@ -48,6 +48,16 @@ Started: Tue Feb 24 01:20:20 PST 2026
   - Pattern: SELECT after INSERT to get server-generated defaults (e.g., created_at)
 ---
 
+## 2026-02-24 - US-005
+- Added POST /api/campaigns/:id/pcs and GET /api/campaigns/:id/pcs to src/routes/campaigns.ts
+- POST validates name and playerName as non-empty strings, returns 404 if campaign not found/not owned
+- GET returns all PCs for the campaign (with 404 if campaign not found/not owned)
+- DB columns player_name/campaign_id mapped to camelCase in responses
+- **Learnings for future iterations:**
+  - PCs live in campaigns.ts alongside campaign routes (no separate file needed)
+  - Verify campaign ownership before returning PCs (DM isolation)
+---
+
 ## 2026-02-24 - US-002
 - Created src/routes/auth.ts with POST /api/auth/login
 - Uses crypto.randomUUID() for UUID generation (built-in Node.js)

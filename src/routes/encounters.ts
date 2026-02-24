@@ -146,4 +146,97 @@ encounters.delete('/:id/monsters/:monsterId', (c) => {
   return c.body(null, 204)
 })
 
+encounters.post('/:id/pcs', async (c) => {
+  const dm = c.get('dm')
+  const encounterId = c.req.param('id')
+
+  const encounter = db.prepare(`
+    SELECT e.id, e.status, e.campaign_id FROM encounters e
+    JOIN campaigns camp ON camp.id = e.campaign_id
+    WHERE e.id = ? AND camp.dm_id = ?
+  `).get(encounterId, dm.id) as { id: string; status: string; campaign_id: string } | undefined
+
+  if (!encounter) {
+    return c.json({ error: 'Not found' }, 404)
+  }
+  if (encounter.status !== 'draft') {
+    return c.json({ error: 'Encounter must be in draft status' }, 400)
+  }
+
+  const body = await c.req.json().catch(() => null)
+  const pcIds = body?.pcIds
+
+  if (!Array.isArray(pcIds) || pcIds.length === 0) {
+    return c.json({ error: 'pcIds must be a non-empty array' }, 400)
+  }
+
+  // Verify all PCs belong to the same campaign
+  for (const pcId of pcIds) {
+    const pc = db.prepare('SELECT id FROM pcs WHERE id = ? AND campaign_id = ?').get(pcId, encounter.campaign_id)
+    if (!pc) {
+      return c.json({ error: `PC ${pcId} does not belong to this campaign` }, 400)
+    }
+  }
+
+  const insert = db.prepare('INSERT OR IGNORE INTO encounter_pcs (encounter_id, pc_id) VALUES (?, ?)')
+  for (const pcId of pcIds) {
+    insert.run(encounterId, pcId)
+  }
+
+  const rows = db.prepare(`
+    SELECT p.id, p.name, p.player_name, p.campaign_id
+    FROM pcs p
+    JOIN encounter_pcs ep ON ep.pc_id = p.id
+    WHERE ep.encounter_id = ?
+  `).all(encounterId) as { id: string; name: string; player_name: string; campaign_id: string }[]
+
+  return c.json(rows.map(p => ({ id: p.id, name: p.name, playerName: p.player_name, campaignId: p.campaign_id })))
+})
+
+encounters.get('/:id/pcs', (c) => {
+  const dm = c.get('dm')
+  const encounterId = c.req.param('id')
+
+  const encounter = db.prepare(`
+    SELECT e.id FROM encounters e
+    JOIN campaigns camp ON camp.id = e.campaign_id
+    WHERE e.id = ? AND camp.dm_id = ?
+  `).get(encounterId, dm.id)
+
+  if (!encounter) {
+    return c.json({ error: 'Not found' }, 404)
+  }
+
+  const rows = db.prepare(`
+    SELECT p.id, p.name, p.player_name, p.campaign_id
+    FROM pcs p
+    JOIN encounter_pcs ep ON ep.pc_id = p.id
+    WHERE ep.encounter_id = ?
+  `).all(encounterId) as { id: string; name: string; player_name: string; campaign_id: string }[]
+
+  return c.json(rows.map(p => ({ id: p.id, name: p.name, playerName: p.player_name, campaignId: p.campaign_id })))
+})
+
+encounters.delete('/:id/pcs/:pcId', (c) => {
+  const dm = c.get('dm')
+  const encounterId = c.req.param('id')
+  const pcId = c.req.param('pcId')
+
+  const encounter = db.prepare(`
+    SELECT e.id, e.status FROM encounters e
+    JOIN campaigns camp ON camp.id = e.campaign_id
+    WHERE e.id = ? AND camp.dm_id = ?
+  `).get(encounterId, dm.id) as { id: string; status: string } | undefined
+
+  if (!encounter) {
+    return c.json({ error: 'Not found' }, 404)
+  }
+  if (encounter.status !== 'draft') {
+    return c.json({ error: 'Encounter must be in draft status' }, 400)
+  }
+
+  db.prepare('DELETE FROM encounter_pcs WHERE encounter_id = ? AND pc_id = ?').run(encounterId, pcId)
+  return c.body(null, 204)
+})
+
 export default encounters

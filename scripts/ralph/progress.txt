@@ -48,6 +48,16 @@ Started: Tue Feb 24 01:20:20 PST 2026
   - Pattern: SELECT after INSERT to get server-generated defaults (e.g., created_at)
 ---
 
+## 2026-02-24 - US-006
+- Added POST /api/campaigns/:id/encounters and GET /api/campaigns/:id/encounters to campaigns.ts
+- Created src/routes/encounters.ts with GET /api/encounters/:id (includes monsters and pcs)
+- encounterNumber auto-increments via COUNT(*) + 1 per campaign
+- Registered /api/encounters route in index.ts
+- **Learnings for future iterations:**
+  - COUNT(*) pattern for auto-incrementing encounter_number per campaign
+  - GET /api/encounters/:id joins campaigns to enforce DM ownership; includes monsters and encounter_pcs for full detail
+---
+
 ## 2026-02-24 - US-005
 - Added POST /api/campaigns/:id/pcs and GET /api/campaigns/:id/pcs to src/routes/campaigns.ts
 - POST validates name and playerName as non-empty strings, returns 404 if campaign not found/not owned

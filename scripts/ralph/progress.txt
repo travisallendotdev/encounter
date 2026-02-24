@@ -48,6 +48,15 @@ Started: Tue Feb 24 01:20:20 PST 2026
   - Pattern: SELECT after INSERT to get server-generated defaults (e.g., created_at)
 ---
 
+## 2026-02-24 - US-008
+- Added POST /api/encounters/:id/pcs, GET /api/encounters/:id/pcs, DELETE /api/encounters/:id/pcs/:pcId to encounters.ts
+- POST validates all pcIds belong to the encounter's campaign; uses INSERT OR IGNORE for idempotency
+- Both POST and DELETE check encounter is in 'draft' status; 404 if not found/not owned
+- **Learnings for future iterations:**
+  - INSERT OR IGNORE on encounter_pcs handles duplicate assignment idempotently (PK is encounter_id+pc_id)
+  - Validate pcIds belong to encounter's campaign_id before inserting
+---
+
 ## 2026-02-24 - US-007
 - Added POST /api/encounters/:id/monsters, GET /api/encounters/:id/monsters, DELETE /api/encounters/:id/monsters/:monsterId to encounters.ts
 - POST creates individual monster instances; quantity > 1 produces "Name N" encounterInstanceName, quantity = 1 keeps base name

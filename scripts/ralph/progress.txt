@@ -4,6 +4,9 @@
 - Use `import.meta.url` + `fileURLToPath`/`dirname` for `__dirname` equivalent in ESM files
 - All local imports need `.js` extension (NodeNext module resolution with verbatimModuleSyntax)
 - `db.pragma('foreign_keys = ON')` must be set per-connection for FK enforcement in SQLite
+- Hono context Variables (e.g., `dm`) defined in `src/types.ts`; use `new Hono<{ Variables: Variables }>()` for typed context access
+- Use `createMiddleware` from `hono/factory` for typed middleware; apply globally in index.ts with path/method exclusion for public routes
+- Auth middleware excludes POST /api/auth/login via path check in `app.use('*', ...)` wrapper
 ---
 
 # Ralph Progress Log
@@ -21,6 +24,17 @@ Started: Tue Feb 24 01:20:20 PST 2026
   - better-sqlite3 is a native addon - pnpm silently skips its build scripts; needed manual `npm install` in its module dir to compile the .node file
   - pnpm store mismatch between host and container: needed `pnpm config set store-dir /workspace/.pnpm-store --global` then `CI=true pnpm install`
   - import.meta.url gives correct path in both tsx (dev) and compiled (dist/) - migrations resolve relative to the compiled migrate.js location
+---
+
+## 2026-02-24 - US-003
+- Created src/types.ts with DM and Variables types for Hono typed context
+- Created src/middleware/auth.ts using `createMiddleware` from hono/factory
+- Middleware reads X-DM-Username header, looks up DM in DB, sets dm on context; returns 401 if missing/unknown
+- Updated src/index.ts: typed app with Variables, applied authMiddleware globally with POST /api/auth/login exclusion
+- **Learnings for future iterations:**
+  - `createMiddleware<{ Variables: Variables }>` from `hono/factory` provides typed middleware
+  - Type the root app as `new Hono<{ Variables: Variables }>()` so route handlers can call `c.get('dm')` with proper types
+  - Exclude public routes from middleware via conditional check in `app.use('*', ...)` wrapper (path + method check)
 ---
 
 ## 2026-02-24 - US-002

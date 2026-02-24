@@ -1,0 +1,161 @@
+{
+  "project": "Encounter",
+  "branchName": "ralph/encounter-tracker",
+  "description": "D&D 5e Combat Tracker — Server-side REST API for managing campaigns, PCs, encounters, monsters, and initiative tracking",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Set up SQLite database with schema and migrations",
+      "description": "As a developer, I need the database schema and connection so all subsequent stories have persistence.",
+      "acceptanceCriteria": [
+        "Install better-sqlite3 and @types/better-sqlite3 as dependencies",
+        "Create src/db/connection.ts that opens (or creates) an SQLite database file at data/encounter.db",
+        "Create src/db/migrate.ts that reads .sql files from src/db/migrations/ and runs them in order, tracking which have been applied in a migrations table",
+        "Create src/db/migrations/001-initial-schema.sql with tables: dms (id TEXT PRIMARY KEY, username TEXT UNIQUE NOT NULL), campaigns (id TEXT PRIMARY KEY, name TEXT NOT NULL, dm_id TEXT NOT NULL REFERENCES dms(id), created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP), pcs (id TEXT PRIMARY KEY, name TEXT NOT NULL, player_name TEXT NOT NULL, campaign_id TEXT NOT NULL REFERENCES campaigns(id)), encounters (id TEXT PRIMARY KEY, name TEXT NOT NULL, campaign_id TEXT NOT NULL REFERENCES campaigns(id), encounter_number INTEGER NOT NULL, status TEXT NOT NULL DEFAULT 'draft'), monsters (id TEXT PRIMARY KEY, name TEXT NOT NULL, encounter_instance_name TEXT NOT NULL, initiative_modifier INTEGER NOT NULL DEFAULT 0, encounter_id TEXT NOT NULL REFERENCES encounters(id)), encounter_pcs (encounter_id TEXT NOT NULL REFERENCES encounters(id), pc_id TEXT NOT NULL REFERENCES pcs(id), PRIMARY KEY (encounter_id, pc_id)), turn_order (encounter_id TEXT NOT NULL REFERENCES encounters(id), participant_id TEXT NOT NULL, participant_type TEXT NOT NULL CHECK(participant_type IN ('pc', 'monster')), name TEXT NOT NULL, initiative INTEGER NOT NULL, position INTEGER NOT NULL, PRIMARY KEY (encounter_id, participant_id))",
+        "Call migrate() on server startup in src/index.ts before starting the Hono server",
+        "Add 'data/' to .gitignore",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "DM login endpoint",
+      "description": "As a DM, I want to identify myself with a username so the server knows who I am.",
+      "acceptanceCriteria": [
+        "POST /api/auth/login accepts { \"username\": string } and returns a DM object with id and username",
+        "If the username doesn't exist, a new DM record is created with a UUID id",
+        "If the username already exists, the existing DM record is returned",
+        "Returns 400 if username is missing or empty",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Auth middleware for X-DM-Username header",
+      "description": "As a developer, I need middleware that authenticates requests via the X-DM-Username header so all protected endpoints know which DM is making the request.",
+      "acceptanceCriteria": [
+        "Create auth middleware that reads X-DM-Username header, looks up the DM in the database, and attaches the DM object to the Hono context",
+        "Requests without X-DM-Username header receive 401 { \"error\": \"Unauthorized\" }",
+        "Requests with an unknown username receive 401 { \"error\": \"Unauthorized\" }",
+        "Middleware is applied to all routes except POST /api/auth/login",
+        "All endpoints return JSON with consistent error shape { \"error\": string }",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Create and list campaigns",
+      "description": "As a DM, I want to create a campaign with a name and list my campaigns.",
+      "acceptanceCriteria": [
+        "POST /api/campaigns accepts { \"name\": string } and returns the created campaign with id, name, dmId, and createdAt",
+        "Campaign names must be non-empty strings; returns 400 otherwise",
+        "The campaign is associated with the authenticated DM",
+        "GET /api/campaigns returns all campaigns belonging to the authenticated DM",
+        "GET /api/campaigns/:id returns a single campaign (404 if not found or not owned by DM)",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Add and list PCs in a campaign",
+      "description": "As a DM, I want to add Player Characters to my campaign, along with the player's name, so I can track who is playing.",
+      "acceptanceCriteria": [
+        "POST /api/campaigns/:id/pcs accepts { \"name\": string, \"playerName\": string } and returns the created PC with id, name, playerName, and campaignId",
+        "Both name (character name) and playerName (human player name) are required non-empty strings; returns 400 otherwise",
+        "Returns 404 if the campaign doesn't exist or isn't owned by the DM",
+        "GET /api/campaigns/:id/pcs returns all PCs in a campaign",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Create and list encounters in a campaign",
+      "description": "As a DM, I want to create an encounter within a campaign so I can set up a combat scenario.",
+      "acceptanceCriteria": [
+        "POST /api/campaigns/:id/encounters accepts { \"name\": string } and returns the created encounter with id, name, campaignId, encounterNumber, and status ('draft')",
+        "encounterNumber auto-increments per campaign (first encounter in a campaign = 1, second = 2, etc.)",
+        "The encounter name must be a non-empty string; returns 400 otherwise",
+        "Returns 404 if the campaign doesn't exist or isn't owned by the DM",
+        "GET /api/campaigns/:id/encounters returns all encounters in a campaign",
+        "GET /api/encounters/:id returns a single encounter with its monsters and PCs included",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Add and remove monsters from an encounter",
+      "description": "As a DM, I want to add monsters to an encounter by name, quantity, and initiative modifier, and remove them if needed.",
+      "acceptanceCriteria": [
+        "POST /api/encounters/:id/monsters accepts { \"name\": string, \"quantity\": number, \"initiativeModifier\": number } where quantity >= 1 and initiativeModifier defaults to 0",
+        "Creates individual monster instances labeled sequentially (e.g., 'Goblin 1', 'Goblin 2') when quantity > 1",
+        "Each monster instance record has id, name, encounterInstanceName, initiativeModifier, and encounterId",
+        "Can be called multiple times to add different monster types to the same encounter",
+        "Encounter must be in 'draft' status to add monsters; returns 400 otherwise",
+        "Returns 404 if the encounter doesn't exist or isn't owned by the DM",
+        "GET /api/encounters/:id/monsters returns all monsters in an encounter",
+        "DELETE /api/encounters/:id/monsters/:monsterId removes a monster from a draft encounter; returns 400 if encounter is not in 'draft' status",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Assign and remove PCs from an encounter",
+      "description": "As a DM, I want to assign PCs from my campaign to an encounter and remove them if needed.",
+      "acceptanceCriteria": [
+        "POST /api/encounters/:id/pcs accepts { \"pcIds\": string[] } — an array of PC IDs to assign",
+        "The PCs must belong to the same campaign as the encounter; returns 400 if any don't match",
+        "Encounter must be in 'draft' status to assign PCs; returns 400 otherwise",
+        "Duplicate assignments are ignored (idempotent)",
+        "Returns 404 if the encounter doesn't exist or isn't owned by the DM",
+        "GET /api/encounters/:id/pcs returns all PCs assigned to an encounter",
+        "DELETE /api/encounters/:id/pcs/:pcId removes a PC from a draft encounter; returns 400 if encounter is not in 'draft' status",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Start an encounter with initiative",
+      "description": "As a DM, I want to start an encounter and enter initiative values so combat can proceed in turn order.",
+      "acceptanceCriteria": [
+        "POST /api/encounters/:id/start accepts { \"monsterInitiatives\": \"manual\" | \"auto\", \"initiatives\": { \"<participantId>\": number } }",
+        "If monsterInitiatives is 'auto', the server rolls 1d20 + initiativeModifier individually for each monster — any monster values in initiatives are ignored",
+        "If monsterInitiatives is 'manual', initiative values for all monsters must be provided in initiatives; returns 400 if any are missing",
+        "Initiative values for all assigned PCs must always be provided in initiatives (PCs never auto-roll); returns 400 if any are missing",
+        "Returns 400 if encounter has no monsters or no PCs assigned",
+        "Returns 400 if the encounter is not in 'draft' status",
+        "Returns 404 if the encounter doesn't exist or isn't owned by the DM",
+        "Encounter status changes to 'active'",
+        "Response includes a turnOrder array of { participantId, participantType ('pc' | 'monster'), name, initiative } sorted by initiative descending, ties broken randomly",
+        "Turn order is persisted in the turn_order table",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}

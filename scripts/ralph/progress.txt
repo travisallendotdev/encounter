@@ -1,0 +1,36 @@
+## Codebase Patterns
+- pnpm requires `CI=true pnpm install` in this environment (no TTY); first run after fresh clone needs this
+- better-sqlite3 native addon must be built: run `npm install --ignore-scripts=false` in its pnpm module directory, or set `build-scripts[]=better-sqlite3` in `.npmrc` and rebuild
+- Use `import.meta.url` + `fileURLToPath`/`dirname` for `__dirname` equivalent in ESM files
+- All local imports need `.js` extension (NodeNext module resolution with verbatimModuleSyntax)
+- `db.pragma('foreign_keys = ON')` must be set per-connection for FK enforcement in SQLite
+---
+
+# Ralph Progress Log
+Started: Tue Feb 24 01:20:20 PST 2026
+---
+
+## 2026-02-24 - US-001
+- Installed better-sqlite3 and @types/better-sqlite3
+- Created src/db/connection.ts: opens data/encounter.db, enables WAL mode and foreign keys
+- Created src/db/migrate.ts: reads .sql files from migrations/, tracks applied in `migrations` table
+- Created src/db/migrations/001-initial-schema.sql: all 7 tables (dms, campaigns, pcs, encounters, monsters, encounter_pcs, turn_order)
+- Updated src/index.ts to call migrate() before serving
+- Added data/ to .gitignore; added .npmrc with build-scripts[]=better-sqlite3
+- **Learnings for future iterations:**
+  - better-sqlite3 is a native addon - pnpm silently skips its build scripts; needed manual `npm install` in its module dir to compile the .node file
+  - pnpm store mismatch between host and container: needed `pnpm config set store-dir /workspace/.pnpm-store --global` then `CI=true pnpm install`
+  - import.meta.url gives correct path in both tsx (dev) and compiled (dist/) - migrations resolve relative to the compiled migrate.js location
+---
+
+## 2026-02-24 - US-002
+- Created src/routes/auth.ts with POST /api/auth/login
+- Uses crypto.randomUUID() for UUID generation (built-in Node.js)
+- Upsert-style: returns existing DM if username found, creates new with 201 if not
+- Returns 400 if username is missing or empty
+- Updated src/index.ts to register auth routes at /api/auth
+- **Learnings for future iterations:**
+  - Use `crypto.randomUUID()` from `node:crypto` for UUIDs (no external package needed)
+  - Hono routes are registered with `app.route('/prefix', router)`
+  - Pattern for upsert: SELECT first, INSERT if not found — avoids ON CONFLICT for clearer return codes
+---

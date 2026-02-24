@@ -46,6 +46,63 @@ campaigns.get('/:id', (c) => {
   return c.json({ id: row.id, name: row.name, dmId: row.dm_id, createdAt: row.created_at })
 })
 
+campaigns.post('/:id/encounters', async (c) => {
+  const dm = c.get('dm')
+  const campaignId = c.req.param('id')
+
+  const campaign = db.prepare('SELECT id FROM campaigns WHERE id = ? AND dm_id = ?').get(campaignId, dm.id)
+  if (!campaign) {
+    return c.json({ error: 'Not found' }, 404)
+  }
+
+  const body = await c.req.json().catch(() => null)
+  const name = body?.name
+
+  if (!name || typeof name !== 'string' || name.trim() === '') {
+    return c.json({ error: 'name is required' }, 400)
+  }
+
+  const countRow = db.prepare('SELECT COUNT(*) as count FROM encounters WHERE campaign_id = ?').get(campaignId) as { count: number }
+  const encounterNumber = countRow.count + 1
+
+  const id = randomUUID()
+  db.prepare('INSERT INTO encounters (id, name, campaign_id, encounter_number, status) VALUES (?, ?, ?, ?, ?)').run(id, name.trim(), campaignId, encounterNumber, 'draft')
+
+  const encounter = db.prepare('SELECT id, name, campaign_id, encounter_number, status FROM encounters WHERE id = ?').get(id) as {
+    id: string; name: string; campaign_id: string; encounter_number: number; status: string
+  }
+
+  return c.json({
+    id: encounter.id,
+    name: encounter.name,
+    campaignId: encounter.campaign_id,
+    encounterNumber: encounter.encounter_number,
+    status: encounter.status
+  }, 201)
+})
+
+campaigns.get('/:id/encounters', (c) => {
+  const dm = c.get('dm')
+  const campaignId = c.req.param('id')
+
+  const campaign = db.prepare('SELECT id FROM campaigns WHERE id = ? AND dm_id = ?').get(campaignId, dm.id)
+  if (!campaign) {
+    return c.json({ error: 'Not found' }, 404)
+  }
+
+  const rows = db.prepare('SELECT id, name, campaign_id, encounter_number, status FROM encounters WHERE campaign_id = ? ORDER BY encounter_number ASC').all(campaignId) as {
+    id: string; name: string; campaign_id: string; encounter_number: number; status: string
+  }[]
+
+  return c.json(rows.map(r => ({
+    id: r.id,
+    name: r.name,
+    campaignId: r.campaign_id,
+    encounterNumber: r.encounter_number,
+    status: r.status
+  })))
+})
+
 campaigns.post('/:id/pcs', async (c) => {
   const dm = c.get('dm')
   const campaignId = c.req.param('id')

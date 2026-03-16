@@ -1,6 +1,6 @@
 # TUI Client Design Spec
 
-A minimal terminal UI for the D&D 5e encounter tracker API, built with Ink (React for CLIs). Covers all 22 API endpoints with a screen-based navigation flow.
+A minimal terminal UI for the D&D 5e encounter tracker API, built with Ink (React for CLIs). Covers all 16 API endpoints with a screen-based navigation flow.
 
 ## Decisions
 
@@ -16,7 +16,7 @@ A minimal terminal UI for the D&D 5e encounter tracker API, built with Ink (Reac
 src/tui/
   index.tsx            — Entry point, renders <App />
   app.tsx              — Top-level component, manages screen navigation
-  api.ts               — HTTP client wrapping all 22 API endpoints
+  api.ts               — HTTP client wrapping all 16 API endpoints
   screens/
     login.tsx          — Username prompt
     campaigns.tsx      — List/create campaigns
@@ -30,7 +30,9 @@ src/tui/
     text-input.tsx     — Single-line text input
 ```
 
-**Dependencies to add:** `ink`, `react`, `@types/react`
+**Dependencies to add:** `ink`, `react@^18`, `@types/react`, `ink-text-input`
+
+**JSX configuration:** The existing project uses `jsxImportSource: hono/jsx`. The TUI needs React JSX. Add a `src/tui/tsconfig.json` that extends the root config and overrides `jsxImportSource` to `react`.
 
 **New script:** `"tui": "tsx src/tui/index.tsx"`
 
@@ -95,7 +97,7 @@ Shows encounter name and status.
 - **Start Encounter** — Navigates to initiative screen.
 - **Back** — Returns to campaign-detail.
 
-**If active**, shows the turn order table (read-only) with back option.
+**If active**, shows the turn order table (read-only) with back option. Note: the server does not have a dedicated turn order endpoint. The TUI caches the turn order from the `POST /api/encounters/:id/start` response in app state. If the user navigates away and returns to an active encounter without the cached data, the screen shows a message indicating the turn order was set when the encounter started.
 
 ### Initiative
 
@@ -140,7 +142,20 @@ class ApiClient {
   removeEncounterPC(encounterId: string, pcId: string): Promise<void>
 
   // Initiative
+  // `initiatives` contains entries for all PCs (always required) plus entries for
+  // all monsters (only when monsterInitiatives is 'manual'). Keys are participant IDs.
   startEncounter(encounterId: string, monsterInitiatives: 'auto' | 'manual', initiatives: Record<string, number>): Promise<StartResult>
+}
+
+// StartResult returned by POST /api/encounters/:id/start
+type StartResult = {
+  status: string
+  turnOrder: Array<{
+    participantId: string
+    participantType: 'pc' | 'monster'
+    name: string
+    initiative: number
+  }>
 }
 ```
 
@@ -154,4 +169,4 @@ A single instance is created at the top level and passed to screens via props. A
 
 **`<Header />`** — Breadcrumb bar from app context. Always visible at the top. Shows `DM: {username}`, appending `> {campaign}` and `> {encounter}` as context grows.
 
-**`<TextInput />`** — Single-line text input with a label. Captures keystrokes, displays current value, calls `onSubmit(value)` on Enter.
+**`<TextInput />`** — Wraps `ink-text-input`. Single-line text input with a label. Calls `onSubmit(value)` on Enter.

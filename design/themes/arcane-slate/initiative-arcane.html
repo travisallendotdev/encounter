@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dice Fight — Roll for Initiative (Arcane Slate)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/arcane.css" />
+<style>
+  .init-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+  .init-row { display: flex; align-items: center; gap: 14px; padding: 11px 12px 11px 15px; border-radius: var(--radius-sm); background: var(--surface-2); border: 1px solid var(--border); }
+  .init-row .row-marker { width: 4px; align-self: stretch; border-radius: 4px; margin: -1px 0; }
+  .is-pc .row-marker { background: var(--pc); } .is-monster .row-marker { background: var(--monster); }
+  .init-input { width: 72px; height: 52px; font-family: var(--font-mono); font-size: 24px; font-weight: 700; text-align: center; border-radius: 10px; background: var(--bg-2); border: 1px solid var(--border-2); color: var(--fg); font-variant-numeric: tabular-nums; }
+  .init-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .init-input.filled { border-color: var(--pc); color: var(--accent-strong); }
+  .roll-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  .btn-roll { font-size: 13px; padding: 9px 14px; }
+  .rolled { width: 72px; height: 52px; display: grid; place-items: center; border-radius: 10px; font-family: var(--font-mono); font-size: 24px; font-weight: 700; color: var(--monster); background: var(--bg-2); border: 1px solid var(--monster); font-variant-numeric: tabular-nums; }
+  .hint-sm { font-size: 12.5px; color: var(--muted); margin: -6px 0 16px; }
+  .beginbar { margin-top: 26px; display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; background: linear-gradient(180deg, var(--surface), var(--bg-2)); border: 1px solid var(--border-2); border-radius: var(--radius); padding: 20px 24px; }
+  .beginbar .left { font-size: 14px; color: var(--muted); } .beginbar .left b { font-family: var(--font-mono); color: var(--fg); }
+  @media (max-width: 760px) { .init-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="campaigns-arcane.html">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M12 2.3 20 7v10l-8 4.7L4 17V7l8-4.7Z"/><path d="M4 7l8 4.6L20 7M12 11.6V21.7M4 17l8-5 8 5"/></svg></span>
+      <span class="brand-name">Dice<b>Fight</b></span>
+    </a>
+    <nav class="crumbs"><a href="campaign-arcane.html">Crimson Vault</a><span class="sep">/</span><a href="encounter-setup-arcane.html">The Sunken Crypt</a><span class="sep">/</span><span class="here">Initiative</span></nav>
+    <div class="spacer"></div>
+    <div class="user-chip"><span class="av">M</span> Master Aldous</div>
+  </header>
+
+  <main class="page">
+    <div class="page-head">
+      <div>
+        <div class="eyebrow">The Sunken Crypt · go around the table</div>
+        <h1 class="h-title">Roll for Initiative</h1>
+        <p class="h-sub">Ask each player what they rolled and key it in. Let the app roll the monsters, or set them yourself.</p>
+      </div>
+    </div>
+
+    <div class="init-grid">
+      <section class="panel">
+        <div class="roll-head">
+          <div class="panel-title">
+            <span class="ico" style="color:var(--pc)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"/><circle cx="9.5" cy="8" r="3.2"/><path d="M21 19v-1a4 4 0 0 0-3-3.8"/></svg></span>
+            The Party <span class="count">3</span>
+          </div>
+        </div>
+        <p class="hint-sm">Enter the number each player rolled.</p>
+        <div class="list">
+          <div class="init-row is-pc"><span class="row-marker"></span>
+            <div class="row-body"><div class="row-name">Lyra Brightwood</div><div class="row-meta">Ranger · +3 init</div></div>
+            <input class="init-input filled" type="number" value="21" aria-label="Lyra initiative" /></div>
+          <div class="init-row is-pc"><span class="row-marker"></span>
+            <div class="row-body"><div class="row-name">Thorne Ironfist</div><div class="row-meta">Paladin · +0 init</div></div>
+            <input class="init-input filled" type="number" value="15" aria-label="Thorne initiative" /></div>
+          <div class="init-row is-pc"><span class="row-marker"></span>
+            <div class="row-body"><div class="row-name">Sister Vex</div><div class="row-meta">Cleric · +1 init</div></div>
+            <input class="init-input" type="number" placeholder="—" aria-label="Vex initiative" /></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="roll-head">
+          <div class="panel-title">
+            <span class="ico" style="color:var(--monster)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5C5 6.9 8.1 4 12 4s7 2.9 7 6.5c0 2.2-1.1 3.9-2.5 4.9v2.1c0 .8-.7 1.5-1.5 1.5h-6c-.8 0-1.5-.7-1.5-1.5v-2.1C6.1 14.4 5 12.7 5 10.5Z"/><circle cx="9.2" cy="11" r="1.2" fill="currentColor"/><circle cx="14.8" cy="11" r="1.2" fill="currentColor"/><path d="M11 16.6v1.6M13 16.6v1.6"/></svg></span>
+            Monsters <span class="count">5</span>
+          </div>
+          <button class="btn btn-roll">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8" cy="8" r="1.4" fill="currentColor"/><circle cx="16" cy="16" r="1.4" fill="currentColor"/><circle cx="16" cy="8" r="1.4" fill="currentColor"/><circle cx="8" cy="16" r="1.4" fill="currentColor"/></svg>
+            Roll for monsters
+          </button>
+        </div>
+        <p class="hint-sm">Auto-rolled (d20 + init mod). Tap any number to override.</p>
+        <div class="list">
+          <div class="init-row is-monster"><span class="row-marker"></span><div class="row-body"><div class="row-name">Goblin 2</div><div class="row-meta">+2 init</div></div><span class="rolled">19</span></div>
+          <div class="init-row is-monster"><span class="row-marker"></span><div class="row-body"><div class="row-name">Goblin 1</div><div class="row-meta">+2 init</div></div><span class="rolled">14</span></div>
+          <div class="init-row is-monster"><span class="row-marker"></span><div class="row-body"><div class="row-name">Skeleton 1</div><div class="row-meta">+0 init</div></div><span class="rolled">11</span></div>
+          <div class="init-row is-monster"><span class="row-marker"></span><div class="row-body"><div class="row-name">Bone Acolyte</div><div class="row-meta">+1 init</div></div><span class="rolled">8</span></div>
+          <div class="init-row is-monster"><span class="row-marker"></span><div class="row-body"><div class="row-name">Goblin 3</div><div class="row-meta">+2 init</div></div><span class="rolled">6</span></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="beginbar">
+      <div class="left"><b>7 of 8</b> initiatives set · Sister Vex still pending</div>
+      <a class="btn btn-primary btn-lg" href="combat-arcane-slate.html">
+        Begin combat
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-9 11h7l-1 9 9-11h-7l1-9Z"/></svg>
+      </a>
+    </div>
+
+    <div class="foot">
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg></span>
+      Arcane Slate · Initiative Setup
+    </div>
+  </main>
+</body>
+</html>

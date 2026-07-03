@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { AppRoutes } from './routes/router'
 import { ThemeProvider } from './theme/ThemeProvider'
 
 const queryClient = new QueryClient({
@@ -9,7 +10,7 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <h1 className="p-8 font-display text-accent">DiceFight</h1>
+        <AppRoutes />
       </ThemeProvider>
     </QueryClientProvider>
   )

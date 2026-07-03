@@ -3,8 +3,11 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "dev:web": "pnpm --dir web dev",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "e2e:api": "rm -rf .e2e-data && mkdir -p .e2e-data && cd .e2e-data && tsx ../src/index.ts",
+    "e2e:web": "pnpm --dir web e2e"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.9",

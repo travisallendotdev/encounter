@@ -1,0 +1,123 @@
+@import 'tailwindcss';
+
+/* ---- candlelight (default) — values from design/themes/candlelight/css/app.css ---- */
+:root,
+[data-theme='candlelight'] {
+  --bg: #0e0c09;
+  --bg-2: #141009;
+  --surface: #1b1611;
+  --surface-2: #221c15;
+  --surface-3: #2a2219;
+  --border-c: #362d20;
+  --border-c2: #463a28;
+  --fg: #f1e8d8;
+  --muted: #ac9d85;
+  --faint: #756950;
+  --accent: #e8b15a;
+  --accent-strong: #f2c878;
+  --accent-deep: #b97d28;
+  --accent-glow: rgba(232, 177, 90, 0.16);
+  --pc: #62c0d4;
+  --pc-soft: rgba(98, 192, 212, 0.12);
+  --monster: #df5b4d;
+  --monster-soft: rgba(223, 91, 77, 0.12);
+  --ok: #7fc77a;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --font-display: 'Cinzel', 'Iowan Old Style', Georgia, serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  --on-accent: #1c1305;
+  --body-bg:
+    radial-gradient(130% 90% at 50% -15%, #1d160d 0%, transparent 58%),
+    radial-gradient(110% 70% at 50% 115%, #170f07 0%, transparent 55%),
+    var(--bg);
+}
+
+/* ---- arcane slate — values from design/themes/arcane-slate/css/arcane.css ---- */
+[data-theme='arcane-slate'] {
+  --bg: #0d1016;
+  --bg-2: #0f141b;
+  --surface: #151b24;
+  --surface-2: #1b2330;
+  --surface-3: #222c3b;
+  --border-c: rgba(255, 255, 255, 0.08);
+  --border-c2: rgba(255, 255, 255, 0.14);
+  --fg: #e7edf5;
+  --muted: #8b99ab;
+  --faint: #5d6a7d;
+  --accent: #8aa0ff;
+  --accent-strong: #a7b6ff;
+  --accent-deep: #5f76e6;
+  --accent-glow: rgba(138, 160, 255, 0.16);
+  --pc: #46d3e4;
+  --pc-soft: rgba(70, 211, 228, 0.12);
+  --monster: #ff5d8f;
+  --monster-soft: rgba(255, 93, 143, 0.12);
+  --ok: #59d499;
+  --radius: 12px;
+  --radius-sm: 9px;
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --shadow: 0 16px 44px rgba(0, 0, 0, 0.5);
+  --on-accent: #0b1020;
+  --body-bg:
+    radial-gradient(120% 80% at 82% -12%, rgba(138, 160, 255, 0.08), transparent 55%),
+    var(--bg);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--border-c);
+  --color-line-2: var(--border-c2);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-deep: var(--accent-deep);
+  --color-accent-glow: var(--accent-glow);
+  --color-pc: var(--pc);
+  --color-pc-soft: var(--pc-soft);
+  --color-monster: var(--monster);
+  --color-monster-soft: var(--monster-soft);
+  --color-ok: var(--ok);
+  --color-on-accent: var(--on-accent);
+  --radius-card: var(--radius);
+  --radius-el: var(--radius-sm);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+  --shadow-panel: var(--shadow);
+}
+
+body {
+  min-height: 100vh;
+  font: 16px/1.55 var(--font-body);
+  color: var(--fg);
+  background: var(--body-bg);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.005em;
+}
+
+::selection {
+  background: var(--accent-glow);
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  50% {
+    transform: translateY(-7px) rotate(-3deg);
+  }
+}

@@ -27,7 +27,8 @@ function InitiativeForm({ encounter }: { encounter: EncounterDetail }) {
     return seeded
   })
 
-  const setValue = (id: string, value: string) => setValues((prev) => ({ ...prev, [id]: value }))
+  const setValue = (id: string, value: string) =>
+    setValues((prev) => ({ ...prev, [id]: value }))
 
   const rerollMonsters = () =>
     setValues((prev) => {
@@ -39,7 +40,9 @@ function InitiativeForm({ encounter }: { encounter: EncounterDetail }) {
     })
 
   const participants = [...encounter.pcs, ...encounter.monsters]
-  const filledCount = participants.filter((p) => values[p.id]?.trim() !== '' && values[p.id] !== undefined).length
+  const filledCount = participants.filter(
+    (p) => values[p.id]?.trim() !== '' && values[p.id] !== undefined,
+  ).length
   const allFilled = filledCount === participants.length
   const pendingNames = encounter.pcs
     .filter((pc) => !values[pc.id]?.trim())
@@ -73,7 +76,9 @@ function InitiativeForm({ encounter }: { encounter: EncounterDetail }) {
           title="The Party"
           count={encounter.pcs.length}
         >
-          <p className="-mt-1 mb-4 text-[12.5px] text-muted">Enter the number each player rolled.</p>
+          <p className="-mt-1 mb-4 text-[12.5px] text-muted">
+            Enter the number each player rolled.
+          </p>
           <div className="flex flex-col gap-[9px]">
             {encounter.pcs.map((pc) => (
               <div
@@ -83,7 +88,9 @@ function InitiativeForm({ encounter }: { encounter: EncounterDetail }) {
                 <span className="-my-px w-1 self-stretch rounded bg-pc" />
                 <div className="min-w-0 flex-1">
                   <div className="text-[15.5px] font-semibold">{pc.name}</div>
-                  <div className="mt-px text-[13px] text-muted">played by {pc.playerName}</div>
+                  <div className="mt-px text-[13px] text-muted">
+                    played by {pc.playerName}
+                  </div>
                 </div>
                 <input
                   type="number"
@@ -103,7 +110,10 @@ function InitiativeForm({ encounter }: { encounter: EncounterDetail }) {
           title="Monsters"
           count={encounter.monsters.length}
           actions={
-            <Button className="px-3.5 py-2 text-[13px]" onClick={rerollMonsters}>
+            <Button
+              className="px-3.5 py-2 text-[13px]"
+              onClick={rerollMonsters}
+            >
               <Dices className="size-[1.2em]" />
               Roll for monsters
             </Button>
@@ -120,8 +130,12 @@ function InitiativeForm({ encounter }: { encounter: EncounterDetail }) {
               >
                 <span className="-my-px w-1 self-stretch rounded bg-monster" />
                 <div className="min-w-0 flex-1">
-                  <div className="text-[15.5px] font-semibold">{monster.encounterInstanceName}</div>
-                  <div className="mt-px text-[13px] text-muted">{signed(monster.initiativeModifier)} init</div>
+                  <div className="text-[15.5px] font-semibold">
+                    {monster.encounterInstanceName}
+                  </div>
+                  <div className="mt-px text-[13px] text-muted">
+                    {signed(monster.initiativeModifier)} init
+                  </div>
                 </div>
                 <input
                   type="number"
@@ -142,15 +156,23 @@ function InitiativeForm({ encounter }: { encounter: EncounterDetail }) {
             {filledCount} of {participants.length}
           </b>{' '}
           initiatives set
-          {pendingNames.length > 0 && ` · ${pendingNames.join(', ')} still pending`}
+          {pendingNames.length > 0 &&
+            ` · ${pendingNames.join(', ')} still pending`}
         </div>
         <div className="flex flex-col items-stretch gap-2">
-          <Button variant="primary" size="lg" disabled={!allFilled || startEncounter.isPending} onClick={begin}>
+          <Button
+            variant="primary"
+            size="lg"
+            disabled={!allFilled || startEncounter.isPending}
+            onClick={begin}
+          >
             Begin combat
             <Zap className="size-[1.2em]" />
           </Button>
           {startEncounter.isError && (
-            <p className="text-[12.5px] text-monster">{startEncounter.error.message}</p>
+            <p className="text-[12.5px] text-monster">
+              {startEncounter.error.message}
+            </p>
           )}
         </div>
       </div>
@@ -177,7 +199,9 @@ export function InitiativePage() {
         crumbs={[
           {
             label: campaign.data?.name ?? '…',
-            to: encounter.data ? `/campaigns/${encounter.data.campaignId}` : undefined,
+            to: encounter.data
+              ? `/campaigns/${encounter.data.campaignId}`
+              : undefined,
           },
           {
             label: encounter.data?.name ?? '…',
@@ -197,8 +221,8 @@ export function InitiativePage() {
             Roll for Initiative
           </h1>
           <p className="mt-2 max-w-[56ch] text-[15px] text-muted">
-            Ask each player what they rolled and key it in. The app pre-rolls the monsters — override any
-            number you like.
+            Ask each player what they rolled and key it in. The app pre-rolls
+            the monsters — override any number you like.
           </p>
         </div>
 

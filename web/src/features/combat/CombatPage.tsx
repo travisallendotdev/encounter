@@ -42,13 +42,17 @@ function CombatTracker({ initial }: { initial: CombatState }) {
             {state.encounterName}
           </h1>
           <div className="mt-1 text-sm text-muted">
-            {state.turnOrder.length} combatants in the order · highest initiative acts first
+            {state.turnOrder.length} combatants in the order · highest
+            initiative acts first
           </div>
         </div>
         <div className="ml-auto flex items-center gap-3.5 rounded-xl border border-line-2 bg-surface px-[18px] py-2.5">
           <div className="text-center">
-            <div className="text-[10.5px] uppercase tracking-[0.14em] text-muted">Round</div>
+            <div className="text-[10.5px] uppercase tracking-[0.14em] text-muted">
+              Round
+            </div>
             <div
+              role="status"
               className="font-mono text-[22px] font-bold tabular-nums text-accent-strong"
               aria-label={`Round ${state.round}`}
             >
@@ -57,10 +61,14 @@ function CombatTracker({ initial }: { initial: CombatState }) {
           </div>
           <div className="w-px self-stretch bg-line-2" />
           <div className="text-center">
-            <div className="text-[10.5px] uppercase tracking-[0.14em] text-muted">Turn</div>
+            <div className="text-[10.5px] uppercase tracking-[0.14em] text-muted">
+              Turn
+            </div>
             <div className="font-mono text-[22px] font-bold tabular-nums text-accent-strong">
               {state.turnIndex + 1}
-              <span className="text-[15px] text-faint">/{state.turnOrder.length}</span>
+              <span className="text-[15px] text-faint">
+                /{state.turnOrder.length}
+              </span>
             </div>
           </div>
         </div>
@@ -72,7 +80,9 @@ function CombatTracker({ initial }: { initial: CombatState }) {
           {current.initiative}
         </div>
         <div className="min-w-0 flex-1">
-          <span className="text-[11.5px] font-bold uppercase tracking-[0.18em] text-accent">Now acting</span>
+          <span className="text-[11.5px] font-bold uppercase tracking-[0.18em] text-accent">
+            Now acting
+          </span>
           <div className="mt-1.5 font-display text-[clamp(26px,4vw,40px)] leading-[1.04] font-semibold">
             {current.name}
           </div>
@@ -124,11 +134,17 @@ function CombatTracker({ initial }: { initial: CombatState }) {
                   : 'border-line bg-surface-2'
               } ${isDone ? 'opacity-40' : ''}`}
             >
-              <span className="w-[22px] flex-none text-right font-mono text-xs text-faint">{i + 1}</span>
-              <span className={`-my-0.5 w-[5px] flex-none self-stretch rounded-[5px] ${marker}`} />
+              <span className="w-[22px] flex-none text-right font-mono text-xs text-faint">
+                {i + 1}
+              </span>
+              <span
+                className={`-my-0.5 w-[5px] flex-none self-stretch rounded-[5px] ${marker}`}
+              />
               <FaceIcon type={entry.participantType} />
               <div className="min-w-0 flex-1">
-                <div className={`text-lg font-semibold ${isActive ? 'text-accent-strong' : ''}`}>
+                <div
+                  className={`text-lg font-semibold ${isActive ? 'text-accent-strong' : ''}`}
+                >
                   {entry.name}
                   {isActive && (
                     <span className="ml-2 rounded-md bg-accent px-2 py-[3px] align-middle text-[10px] font-extrabold uppercase tracking-[0.14em] text-on-accent">
@@ -137,13 +153,19 @@ function CombatTracker({ initial }: { initial: CombatState }) {
                   )}
                 </div>
                 <div className="mt-px text-[12.5px] text-muted">
-                  {entry.participantType === 'pc' ? 'Player character' : 'Monster'}
+                  {entry.participantType === 'pc'
+                    ? 'Player character'
+                    : 'Monster'}
                   {isDone ? ' · acted' : ''}
                 </div>
               </div>
               <span
                 className={`ml-auto font-mono font-bold tabular-nums ${
-                  isActive ? 'text-[34px] text-accent-strong' : isDone ? 'text-3xl text-faint' : 'text-3xl text-fg'
+                  isActive
+                    ? 'text-[34px] text-accent-strong'
+                    : isDone
+                      ? 'text-3xl text-faint'
+                      : 'text-3xl text-fg'
                 }`}
               >
                 {entry.initiative}
@@ -162,9 +184,12 @@ function MissingCombatState({ encounterId }: { encounterId: string }) {
 
   useEffect(() => {
     if (encounter.data?.status === 'draft') {
-      navigate(`/campaigns/${encounter.data.campaignId}/encounters/${encounterId}/setup`, {
-        replace: true,
-      })
+      navigate(
+        `/campaigns/${encounter.data.campaignId}/encounters/${encounterId}/setup`,
+        {
+          replace: true,
+        },
+      )
     }
   }, [encounter.data, encounterId, navigate])
 
@@ -177,11 +202,14 @@ function MissingCombatState({ encounterId }: { encounterId: string }) {
       ) : (
         <Panel title="Turn order unavailable">
           <p className="mb-4 text-sm text-muted">
-            Turn order for this encounter isn't available in this browser — it lives only in the session
-            that started combat.
+            Turn order for this encounter isn't available in this browser — it
+            lives only in the session that started combat.
           </p>
           {encounter.data && (
-            <Link to={`/campaigns/${encounter.data.campaignId}`} className="text-accent hover:underline">
+            <Link
+              to={`/campaigns/${encounter.data.campaignId}`}
+              className="text-accent hover:underline"
+            >
               ← Back to {encounter.data.name}'s campaign
             </Link>
           )}
@@ -198,8 +226,16 @@ export function CombatPage() {
 
   return (
     <>
-      <TopBar crumbs={stored ? [{ label: stored.encounterName }, { label: 'Combat' }] : []} />
-      {stored ? <CombatTracker initial={stored} /> : <MissingCombatState encounterId={encounterId} />}
+      <TopBar
+        crumbs={
+          stored ? [{ label: stored.encounterName }, { label: 'Combat' }] : []
+        }
+      />
+      {stored ? (
+        <CombatTracker initial={stored} />
+      ) : (
+        <MissingCombatState encounterId={encounterId} />
+      )}
     </>
   )
 }

@@ -1,4 +1,10 @@
-export function Pill({ kind, className = '' }: { kind: 'draft' | 'active'; className?: string }) {
+export function Pill({
+  kind,
+  className = '',
+}: {
+  kind: 'draft' | 'active'
+  className?: string
+}) {
   const base =
     'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11.5px] font-bold uppercase tracking-[0.08em]'
   if (kind === 'active') {
@@ -9,5 +15,11 @@ export function Pill({ kind, className = '' }: { kind: 'draft' | 'active'; class
       </span>
     )
   }
-  return <span className={`${base} border-line-2 bg-surface-3 text-muted ${className}`}>Draft</span>
+  return (
+    <span
+      className={`${base} border-line-2 bg-surface-3 text-muted ${className}`}
+    >
+      Draft
+    </span>
+  )
 }

@@ -4,7 +4,10 @@ import { getUsername, setUsername } from '../features/auth/session'
 import { ApiError, apiFetch } from './client'
 
 const okJson = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  })
 
 describe('apiFetch', () => {
   beforeEach(() => {
@@ -23,13 +26,22 @@ describe('apiFetch', () => {
   })
 
   it('parses and validates the response body', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(okJson({ id: 'x', name: 'y' })))
-    const result = await apiFetch('/api/thing', z.object({ id: z.string(), name: z.string() }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(okJson({ id: 'x', name: 'y' })),
+    )
+    const result = await apiFetch(
+      '/api/thing',
+      z.object({ id: z.string(), name: z.string() }),
+    )
     expect(result).toEqual({ id: 'x', name: 'y' })
   })
 
   it('throws ApiError with the server message on 4xx', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(okJson({ error: 'name is required' }, 400)))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(okJson({ error: 'name is required' }, 400)),
+    )
     await expect(apiFetch('/api/thing', z.unknown())).rejects.toMatchObject({
       message: 'name is required',
       status: 400,
@@ -38,17 +50,25 @@ describe('apiFetch', () => {
 
   it('clears the session and emits an event on 401', async () => {
     setUsername('aldous')
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(okJson({ error: 'Unauthorized' }, 401)))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(okJson({ error: 'Unauthorized' }, 401)),
+    )
     const listener = vi.fn()
     window.addEventListener('dicefight:unauthorized', listener)
-    await expect(apiFetch('/api/thing', z.unknown())).rejects.toBeInstanceOf(ApiError)
+    await expect(apiFetch('/api/thing', z.unknown())).rejects.toBeInstanceOf(
+      ApiError,
+    )
     expect(getUsername()).toBeNull()
     expect(listener).toHaveBeenCalled()
     window.removeEventListener('dicefight:unauthorized', listener)
   })
 
   it('returns undefined for 204 responses', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 204 })))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(new Response(null, { status: 204 })),
+    )
     const result = await apiFetch('/api/thing', z.void())
     expect(result).toBeUndefined()
   })

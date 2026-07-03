@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test'
 
-test('login → campaign → encounter → initiative → combat turns', async ({ page }) => {
+test('login → campaign → encounter → initiative → combat turns', async ({
+  page,
+}) => {
   const stamp = Date.now()
   const dm = `dm-${stamp}`
   const campaignName = `Crimson Vault ${stamp}`
@@ -41,9 +43,13 @@ test('login → campaign → encounter → initiative → combat turns', async (
 
   // add both PCs to the party
   await page.getByRole('button', { name: /add lyra to party/i }).click()
-  await expect(page.getByRole('button', { name: /remove lyra from party/i })).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: /remove lyra from party/i }),
+  ).toBeVisible()
   await page.getByRole('button', { name: /add thorne to party/i }).click()
-  await expect(page.getByRole('button', { name: /remove thorne from party/i })).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: /remove thorne from party/i }),
+  ).toBeVisible()
 
   // start → initiative
   await page.getByRole('button', { name: /start encounter/i }).click()

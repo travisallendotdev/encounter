@@ -11,7 +11,11 @@ export class ApiError extends Error {
   }
 }
 
-export async function apiFetch<T>(path: string, schema: ZodType<T>, init?: RequestInit): Promise<T> {
+export async function apiFetch<T>(
+  path: string,
+  schema: ZodType<T>,
+  init?: RequestInit,
+): Promise<T> {
   const headers = new Headers(init?.headers)
   const username = getUsername()
   if (username) headers.set('X-DM-Username', username)

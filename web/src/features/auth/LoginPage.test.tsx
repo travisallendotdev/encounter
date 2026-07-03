@@ -29,15 +29,22 @@ describe('LoginPage', () => {
 
   it('logs in and stores the username', async () => {
     renderLogin()
-    await userEvent.type(screen.getByLabelText(/dungeon master name/i), 'aldous')
-    await userEvent.click(screen.getByRole('button', { name: /take your seat/i }))
+    await userEvent.type(
+      screen.getByLabelText(/dungeon master name/i),
+      'aldous',
+    )
+    await userEvent.click(
+      screen.getByRole('button', { name: /take your seat/i }),
+    )
     expect(await screen.findByText('campaigns page')).toBeInTheDocument()
     expect(getUsername()).toBe('aldous')
   })
 
   it('requires a name before submitting', async () => {
     renderLogin()
-    await userEvent.click(screen.getByRole('button', { name: /take your seat/i }))
+    await userEvent.click(
+      screen.getByRole('button', { name: /take your seat/i }),
+    )
     expect(await screen.findByText(/name is required/i)).toBeInTheDocument()
     expect(getUsername()).toBeNull()
   })

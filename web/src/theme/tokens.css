@@ -1,8 +1,8 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 /* ---- candlelight (default) — values from design/themes/candlelight/css/app.css ---- */
 :root,
-[data-theme='candlelight'] {
+[data-theme="candlelight"] {
   --bg: #0e0c09;
   --bg-2: #141009;
   --surface: #1b1611;
@@ -24,9 +24,10 @@
   --ok: #7fc77a;
   --radius: 14px;
   --radius-sm: 9px;
-  --font-display: 'Cinzel', 'Iowan Old Style', Georgia, serif;
-  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: "Cinzel", "Iowan Old Style", Georgia, serif;
+  --font-body:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
   --on-accent: #1c1305;
   --body-bg:
@@ -36,7 +37,7 @@
 }
 
 /* ---- arcane slate — values from design/themes/arcane-slate/css/arcane.css ---- */
-[data-theme='arcane-slate'] {
+[data-theme="arcane-slate"] {
   --bg: #0d1016;
   --bg-2: #0f141b;
   --surface: #151b24;
@@ -58,13 +59,19 @@
   --ok: #59d499;
   --radius: 12px;
   --radius-sm: 9px;
-  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display:
+    "Space Grotesk", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-body:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --shadow: 0 16px 44px rgba(0, 0, 0, 0.5);
   --on-accent: #0b1020;
   --body-bg:
-    radial-gradient(120% 80% at 82% -12%, rgba(138, 160, 255, 0.08), transparent 55%),
+    radial-gradient(
+      120% 80% at 82% -12%,
+      rgba(138, 160, 255, 0.08),
+      transparent 55%
+    ),
     var(--bg);
 }
 
@@ -99,7 +106,7 @@
 
 body {
   min-height: 100vh;
-  font: 16px/1.55 var(--font-body);
+  font: 16px / 1.55 var(--font-body);
   color: var(--fg);
   background: var(--body-bg);
   background-attachment: fixed;

@@ -10,14 +10,20 @@ import { encounterKeys } from './queries'
 
 function useInvalidateEncounter(encounterId: string) {
   const queryClient = useQueryClient()
-  return () => queryClient.invalidateQueries({ queryKey: encounterKeys.detail(encounterId) })
+  return () =>
+    queryClient.invalidateQueries({
+      queryKey: encounterKeys.detail(encounterId),
+    })
 }
 
 export function useAddMonsters(encounterId: string) {
   const invalidate = useInvalidateEncounter(encounterId)
   return useMutation({
-    mutationFn: (input: { name: string; quantity: number; initiativeModifier: number }) =>
-      addMonsters(encounterId, input),
+    mutationFn: (input: {
+      name: string
+      quantity: number
+      initiativeModifier: number
+    }) => addMonsters(encounterId, input),
     onSuccess: invalidate,
   })
 }
@@ -49,10 +55,14 @@ export function useRemoveEncounterPc(encounterId: string) {
 export function useStartEncounter(encounterId: string) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (input: { monsterInitiatives: 'auto' | 'manual'; initiatives: Record<string, number> }) =>
-      startEncounter(encounterId, input),
+    mutationFn: (input: {
+      monsterInitiatives: 'auto' | 'manual'
+      initiatives: Record<string, number>
+    }) => startEncounter(encounterId, input),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: encounterKeys.detail(encounterId) })
+      queryClient.invalidateQueries({
+        queryKey: encounterKeys.detail(encounterId),
+      })
       queryClient.invalidateQueries({ queryKey: ['campaigns'] })
     },
   })

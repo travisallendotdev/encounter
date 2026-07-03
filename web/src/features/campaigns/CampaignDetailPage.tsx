@@ -18,7 +18,9 @@ const newPcSchema = z.object({
 })
 type NewPcForm = z.infer<typeof newPcSchema>
 
-const newEncounterSchema = z.object({ name: z.string().trim().min(1, 'Encounter name is required') })
+const newEncounterSchema = z.object({
+  name: z.string().trim().min(1, 'Encounter name is required'),
+})
 type NewEncounterForm = z.infer<typeof newEncounterSchema>
 
 function PcPanel({ campaignId }: { campaignId: string }) {
@@ -37,10 +39,16 @@ function PcPanel({ campaignId }: { campaignId: string }) {
       title="Player Characters"
       count={pcs.data?.length ?? '…'}
     >
-      {pcs.isPending && <p className="text-sm text-muted">Gathering the party…</p>}
-      {pcs.isError && <p className="text-sm text-monster">{pcs.error.message}</p>}
+      {pcs.isPending && (
+        <p className="text-sm text-muted">Gathering the party…</p>
+      )}
+      {pcs.isError && (
+        <p className="text-sm text-monster">{pcs.error.message}</p>
+      )}
       {pcs.isSuccess && pcs.data.length === 0 && (
-        <p className="text-sm text-muted">No heroes yet. Add the party below.</p>
+        <p className="text-sm text-muted">
+          No heroes yet. Add the party below.
+        </p>
       )}
       {pcs.isSuccess && pcs.data.length > 0 && (
         <div className="flex flex-col gap-[9px]">
@@ -65,9 +73,16 @@ function PcPanel({ campaignId }: { campaignId: string }) {
       )}
       <form
         className="mt-3.5 flex flex-wrap items-end gap-2.5 border-t border-dashed border-line-2 pt-4"
-        onSubmit={handleSubmit((form) => createPc.mutate(form, { onSuccess: () => reset() }))}
+        onSubmit={handleSubmit((form) =>
+          createPc.mutate(form, { onSuccess: () => reset() }),
+        )}
       >
-        <Field label="Character" htmlFor="pc-name" error={errors.name?.message} className="flex-1 basis-40">
+        <Field
+          label="Character"
+          htmlFor="pc-name"
+          error={errors.name?.message}
+          className="flex-1 basis-40"
+        >
           <input
             id="pc-name"
             className={inputClass}
@@ -76,7 +91,12 @@ function PcPanel({ campaignId }: { campaignId: string }) {
             {...register('name')}
           />
         </Field>
-        <Field label="Player" htmlFor="pc-player" error={errors.playerName?.message} className="flex-1 basis-40">
+        <Field
+          label="Player"
+          htmlFor="pc-player"
+          error={errors.playerName?.message}
+          className="flex-1 basis-40"
+        >
           <input
             id="pc-player"
             className={inputClass}
@@ -89,7 +109,9 @@ function PcPanel({ campaignId }: { campaignId: string }) {
           Add PC
         </Button>
         {createPc.isError && (
-          <p className="basis-full text-[12.5px] text-monster">{createPc.error.message}</p>
+          <p className="basis-full text-[12.5px] text-monster">
+            {createPc.error.message}
+          </p>
         )}
       </form>
     </Panel>
@@ -112,10 +134,16 @@ function EncounterPanel({ campaignId }: { campaignId: string }) {
       title="Encounters"
       count={encounters.data?.length ?? '…'}
     >
-      {encounters.isPending && <p className="text-sm text-muted">Consulting the ledger…</p>}
-      {encounters.isError && <p className="text-sm text-monster">{encounters.error.message}</p>}
+      {encounters.isPending && (
+        <p className="text-sm text-muted">Consulting the ledger…</p>
+      )}
+      {encounters.isError && (
+        <p className="text-sm text-monster">{encounters.error.message}</p>
+      )}
       {encounters.isSuccess && encounters.data.length === 0 && (
-        <p className="text-sm text-muted">Nothing staged yet. Create the first encounter below.</p>
+        <p className="text-sm text-muted">
+          Nothing staged yet. Create the first encounter below.
+        </p>
       )}
       {encounters.isSuccess && encounters.data.length > 0 && (
         <div className="flex flex-col gap-[9px]">
@@ -131,12 +159,18 @@ function EncounterPanel({ campaignId }: { campaignId: string }) {
             >
               <span className="grid size-11 flex-none place-items-center rounded-[9px] border border-line-2 bg-bg-2 text-center font-mono text-[13px] font-bold text-accent">
                 #{encounter.encounterNumber}
-                <small className="block text-[8.5px] tracking-[0.1em] text-faint">ENC</small>
+                <small className="block text-[8.5px] tracking-[0.1em] text-faint">
+                  ENC
+                </small>
               </span>
               <div className="min-w-0 flex-1">
-                <div className="text-[15.5px] font-semibold">{encounter.name}</div>
+                <div className="text-[15.5px] font-semibold">
+                  {encounter.name}
+                </div>
                 <div className="mt-px text-[13px] text-muted">
-                  {encounter.status === 'active' ? 'Combat underway' : 'Drafting'}
+                  {encounter.status === 'active'
+                    ? 'Combat underway'
+                    : 'Drafting'}
                 </div>
               </div>
               <Pill kind={encounter.status} />
@@ -149,11 +183,18 @@ function EncounterPanel({ campaignId }: { campaignId: string }) {
         onSubmit={handleSubmit((form) =>
           createEncounter.mutate(form.name, {
             onSuccess: (encounter) =>
-              navigate(`/campaigns/${campaignId}/encounters/${encounter.id}/setup`),
+              navigate(
+                `/campaigns/${campaignId}/encounters/${encounter.id}/setup`,
+              ),
           }),
         )}
       >
-        <Field label="New encounter" htmlFor="enc-name" error={errors.name?.message} className="w-full">
+        <Field
+          label="New encounter"
+          htmlFor="enc-name"
+          error={errors.name?.message}
+          className="w-full"
+        >
           <input
             id="enc-name"
             className={inputClass}
@@ -162,11 +203,17 @@ function EncounterPanel({ campaignId }: { campaignId: string }) {
             {...register('name')}
           />
         </Field>
-        <Button variant="primary" type="submit" disabled={createEncounter.isPending}>
+        <Button
+          variant="primary"
+          type="submit"
+          disabled={createEncounter.isPending}
+        >
           Create encounter
         </Button>
         {createEncounter.isError && (
-          <p className="basis-full text-[12.5px] text-monster">{createEncounter.error.message}</p>
+          <p className="basis-full text-[12.5px] text-monster">
+            {createEncounter.error.message}
+          </p>
         )}
       </form>
     </Panel>
@@ -184,7 +231,9 @@ export function CampaignDetailPage() {
       <main className="mx-auto max-w-[1180px] px-[clamp(16px,4vw,40px)] pt-[clamp(26px,5vw,52px)] pb-20">
         <div className="mb-[30px] flex flex-wrap items-end justify-between gap-[22px]">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Campaign</div>
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+              Campaign
+            </div>
             <h1 className="font-display text-[clamp(28px,4.4vw,44px)] leading-[1.05] font-semibold tracking-[0.01em] text-fg">
               {campaign.data?.name ?? '…'}
             </h1>

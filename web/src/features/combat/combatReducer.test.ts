@@ -9,7 +9,12 @@ const mk = (turnIndex: number, round = 1): CombatState => ({
   turnIndex,
   turnOrder: [
     { participantId: 'a', participantType: 'pc', name: 'A', initiative: 20 },
-    { participantId: 'b', participantType: 'monster', name: 'B', initiative: 15 },
+    {
+      participantId: 'b',
+      participantType: 'monster',
+      name: 'B',
+      initiative: 15,
+    },
     { participantId: 'c', participantType: 'pc', name: 'C', initiative: 10 },
   ],
 })
@@ -29,7 +34,8 @@ describe('combatReducer', () => {
 
   it('keeps incrementing across multiple rounds', () => {
     let state = mk(0)
-    for (let i = 0; i < 6; i++) state = combatReducer(state, { type: 'NEXT_TURN' })
+    for (let i = 0; i < 6; i++)
+      state = combatReducer(state, { type: 'NEXT_TURN' })
     expect(state.round).toBe(3)
     expect(state.turnIndex).toBe(0)
   })

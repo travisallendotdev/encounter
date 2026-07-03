@@ -16,7 +16,9 @@ export function Panel({
   className?: string
 }) {
   return (
-    <section className={`rounded-card border border-line bg-surface p-[22px] ${className}`}>
+    <section
+      className={`rounded-card border border-line bg-surface p-[22px] ${className}`}
+    >
       {(title || actions) && (
         <div className="mb-4 flex items-center justify-between gap-3.5">
           <div className="flex items-center gap-2.5 font-display text-[19px] font-semibold tracking-[0.02em]">

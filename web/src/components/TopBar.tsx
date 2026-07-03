@@ -58,8 +58,8 @@ export function TopBar({ crumbs = [] }: { crumbs?: Crumb[] }) {
           <Link to="/campaigns" className="hover:text-fg">
             Campaigns
           </Link>
-          {crumbs.map((crumb, i) => (
-            <Fragment key={`${crumb.label}-${i}`}>
+          {crumbs.map((crumb) => (
+            <Fragment key={`${crumb.to ?? ''}/${crumb.label}`}>
               <span className="text-faint">/</span>
               {crumb.to ? (
                 <Link to={crumb.to} className="hover:text-fg">

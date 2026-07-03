@@ -40,7 +40,10 @@ export function LoginPage() {
           Dice<b className="font-bold text-accent">Fight</b>
         </h1>
         <p className="mt-3.5 text-[15.5px] tracking-[0.02em] text-muted">
-          Gather the party. <span className="font-display italic text-fg">Roll for initiative.</span>
+          Gather the party.{' '}
+          <span className="font-display italic text-fg">
+            Roll for initiative.
+          </span>
         </p>
 
         <form
@@ -61,9 +64,15 @@ export function LoginPage() {
             className={`${inputClass} px-4 py-[15px] text-[17px]`}
             {...register('username')}
           />
-          {errors.username && <p className="mt-2 text-[12.5px] text-monster">{errors.username.message}</p>}
+          {errors.username && (
+            <p className="mt-2 text-[12.5px] text-monster">
+              {errors.username.message}
+            </p>
+          )}
           {loginMutation.isError && (
-            <p className="mt-2 text-[12.5px] text-monster">{loginMutation.error.message}</p>
+            <p className="mt-2 text-[12.5px] text-monster">
+              {loginMutation.error.message}
+            </p>
           )}
           <Button
             variant="primary"
@@ -76,7 +85,10 @@ export function LoginPage() {
             <ArrowRight className="size-[1.2em]" />
           </Button>
           <p className="mt-4 text-center text-[12.5px] leading-normal text-faint">
-            No password, no fuss. <b className="font-semibold text-muted">A new name conjures a new account</b>{' '}
+            No password, no fuss.{' '}
+            <b className="font-semibold text-muted">
+              A new name conjures a new account
+            </b>{' '}
             — an old one picks up right where you left off.
           </p>
         </form>

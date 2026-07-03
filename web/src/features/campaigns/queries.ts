@@ -11,13 +11,17 @@ export function useCampaigns() {
 }
 
 export function useCampaign(id: string) {
-  return useQuery({ queryKey: campaignKeys.detail(id), queryFn: () => getCampaign(id) })
+  return useQuery({
+    queryKey: campaignKeys.detail(id),
+    queryFn: () => getCampaign(id),
+  })
 }
 
 export function useCreateCampaign() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: createCampaign,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: campaignKeys.all }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: campaignKeys.all }),
   })
 }

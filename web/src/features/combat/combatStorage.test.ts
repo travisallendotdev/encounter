@@ -4,7 +4,14 @@ import { type CombatState, loadCombat, saveCombat } from './combatStorage'
 const state: CombatState = {
   encounterId: 'e1',
   encounterName: 'The Sunken Crypt',
-  turnOrder: [{ participantId: 'p1', participantType: 'pc', name: 'Lyra', initiative: 18 }],
+  turnOrder: [
+    {
+      participantId: 'p1',
+      participantType: 'pc',
+      name: 'Lyra',
+      initiative: 18,
+    },
+  ],
   round: 2,
   turnIndex: 0,
 }

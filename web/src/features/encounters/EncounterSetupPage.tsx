@@ -12,7 +12,12 @@ import { Pill } from '../../components/Pill'
 import { TopBar } from '../../components/TopBar'
 import { usePcs } from '../campaigns/pcQueries'
 import { useCampaign } from '../campaigns/queries'
-import { useAddMonsters, useRemoveEncounterPc, useRemoveMonster, useSetEncounterPcs } from './mutations'
+import {
+  useAddMonsters,
+  useRemoveEncounterPc,
+  useRemoveMonster,
+  useSetEncounterPcs,
+} from './mutations'
 import { useEncounter } from './queries'
 
 const addMonsterSchema = z.object({
@@ -44,7 +49,9 @@ function MonsterPanel({ encounter }: { encounter: EncounterDetail }) {
       count={encounter.monsters.length}
     >
       {encounter.monsters.length === 0 && (
-        <p className="text-sm text-muted">No monsters staged. Summon some below.</p>
+        <p className="text-sm text-muted">
+          No monsters staged. Summon some below.
+        </p>
       )}
       <div className="flex flex-col gap-[9px]">
         {encounter.monsters.map((monster) => (
@@ -57,10 +64,15 @@ function MonsterPanel({ encounter }: { encounter: EncounterDetail }) {
               <Skull className="size-[1.3em]" strokeWidth={1.6} />
             </span>
             <div className="min-w-0 flex-1">
-              <div className="text-[15.5px] font-semibold">{monster.encounterInstanceName}</div>
+              <div className="text-[15.5px] font-semibold">
+                {monster.encounterInstanceName}
+              </div>
             </div>
             <span className="rounded-[7px] border border-line bg-bg-2 px-[9px] py-[3px] font-mono text-[12.5px] font-bold text-muted">
-              init <span className="text-accent">{signed(monster.initiativeModifier)}</span>
+              init{' '}
+              <span className="text-accent">
+                {signed(monster.initiativeModifier)}
+              </span>
             </span>
             <Button
               variant="icon"
@@ -76,10 +88,18 @@ function MonsterPanel({ encounter }: { encounter: EncounterDetail }) {
       <form
         className="mt-3.5 flex flex-wrap items-end gap-2.5 border-t border-dashed border-line-2 pt-4"
         onSubmit={handleSubmit((form) =>
-          addMonsters.mutate(form, { onSuccess: () => reset({ name: '', quantity: 1, initiativeModifier: 0 }) }),
+          addMonsters.mutate(form, {
+            onSuccess: () =>
+              reset({ name: '', quantity: 1, initiativeModifier: 0 }),
+          }),
         )}
       >
-        <Field label="Monster" htmlFor="mon-name" error={errors.name?.message} className="flex-1 basis-40">
+        <Field
+          label="Monster"
+          htmlFor="mon-name"
+          error={errors.name?.message}
+          className="flex-1 basis-40"
+        >
           <input
             id="mon-name"
             className={inputClass}
@@ -88,8 +108,19 @@ function MonsterPanel({ encounter }: { encounter: EncounterDetail }) {
             {...register('name')}
           />
         </Field>
-        <Field label="Qty" htmlFor="mon-qty" error={errors.quantity?.message} className="w-[84px] flex-none">
-          <input id="mon-qty" type="number" min={1} className={inputNumClass} {...register('quantity')} />
+        <Field
+          label="Qty"
+          htmlFor="mon-qty"
+          error={errors.quantity?.message}
+          className="w-[84px] flex-none"
+        >
+          <input
+            id="mon-qty"
+            type="number"
+            min={1}
+            className={inputNumClass}
+            {...register('quantity')}
+          />
         </Field>
         <Field
           label="Init mod"
@@ -97,20 +128,37 @@ function MonsterPanel({ encounter }: { encounter: EncounterDetail }) {
           error={errors.initiativeModifier?.message}
           className="w-[110px] flex-none"
         >
-          <input id="mon-mod" type="number" className={inputNumClass} {...register('initiativeModifier')} />
+          <input
+            id="mon-mod"
+            type="number"
+            className={inputNumClass}
+            {...register('initiativeModifier')}
+          />
         </Field>
-        <Button variant="primary" type="submit" disabled={addMonsters.isPending}>
+        <Button
+          variant="primary"
+          type="submit"
+          disabled={addMonsters.isPending}
+        >
           Add
         </Button>
         {addMonsters.isError && (
-          <p className="basis-full text-[12.5px] text-monster">{addMonsters.error.message}</p>
+          <p className="basis-full text-[12.5px] text-monster">
+            {addMonsters.error.message}
+          </p>
         )}
       </form>
     </Panel>
   )
 }
 
-function PartyPanel({ encounter, roster }: { encounter: EncounterDetail; roster: Pc[] }) {
+function PartyPanel({
+  encounter,
+  roster,
+}: {
+  encounter: EncounterDetail
+  roster: Pc[]
+}) {
   const addPc = useSetEncounterPcs(encounter.id)
   const removePc = useRemoveEncounterPc(encounter.id)
   const stagedIds = new Set(encounter.pcs.map((pc) => pc.id))
@@ -121,9 +169,13 @@ function PartyPanel({ encounter, roster }: { encounter: EncounterDetail; roster:
       title="Party"
       count={`${encounter.pcs.length} of ${roster.length}`}
     >
-      <p className="-mt-1 mb-3.5 text-[13px] text-muted">Toggle which heroes are present for this fight.</p>
+      <p className="-mt-1 mb-3.5 text-[13px] text-muted">
+        Toggle which heroes are present for this fight.
+      </p>
       {roster.length === 0 && (
-        <p className="text-sm text-muted">This campaign has no PCs yet — add them on the campaign page.</p>
+        <p className="text-sm text-muted">
+          This campaign has no PCs yet — add them on the campaign page.
+        </p>
       )}
       <div className="flex flex-col gap-[9px]">
         {roster.map((pc) => {
@@ -132,27 +184,39 @@ function PartyPanel({ encounter, roster }: { encounter: EncounterDetail; roster:
             <div
               key={pc.id}
               className={`flex items-center gap-[13px] rounded-el border px-3.5 py-3 ${
-                on ? 'border-pc bg-pc-soft' : 'border-line bg-surface-2 opacity-60'
+                on
+                  ? 'border-pc bg-pc-soft'
+                  : 'border-line bg-surface-2 opacity-60'
               }`}
             >
               <span
                 className={`grid size-6 flex-none place-items-center rounded-[7px] border-[1.5px] transition ${
-                  on ? 'border-pc bg-pc text-bg' : 'border-line-2 text-transparent'
+                  on
+                    ? 'border-pc bg-pc text-bg'
+                    : 'border-line-2 text-transparent'
                 }`}
               >
                 <Check className="size-4" strokeWidth={2.4} />
               </span>
               <div className="min-w-0 flex-1">
                 <div className="text-[15.5px] font-semibold">{pc.name}</div>
-                <div className="mt-px text-[13px] text-muted">played by {pc.playerName}</div>
+                <div className="mt-px text-[13px] text-muted">
+                  played by {pc.playerName}
+                </div>
               </div>
               <button
                 type="button"
                 className={`cursor-pointer rounded-[7px] border bg-transparent px-3 py-1.5 text-xs font-bold tracking-[0.04em] ${
                   on ? 'border-line text-monster' : 'border-pc text-pc'
                 }`}
-                aria-label={on ? `Remove ${pc.name} from party` : `Add ${pc.name} to party`}
-                onClick={() => (on ? removePc.mutate(pc.id) : addPc.mutate([pc.id]))}
+                aria-label={
+                  on
+                    ? `Remove ${pc.name} from party`
+                    : `Add ${pc.name} to party`
+                }
+                onClick={() =>
+                  on ? removePc.mutate(pc.id) : addPc.mutate([pc.id])
+                }
                 disabled={addPc.isPending || removePc.isPending}
               >
                 {on ? 'Remove' : 'Add to party'}
@@ -185,7 +249,9 @@ export function EncounterSetupPage() {
     }
   }, [encounter.data?.status, encounterId, navigate])
 
-  const ready = (encounter.data?.monsters.length ?? 0) >= 1 && (encounter.data?.pcs.length ?? 0) >= 1
+  const ready =
+    (encounter.data?.monsters.length ?? 0) >= 1 &&
+    (encounter.data?.pcs.length ?? 0) >= 1
 
   return (
     <>
@@ -206,7 +272,8 @@ export function EncounterSetupPage() {
               {encounter.data?.name ?? '…'}
             </h1>
             <p className="mt-2 max-w-[56ch] text-[15px] text-muted">
-              Stage the monsters and the party before you roll. Nothing is locked until combat begins.
+              Stage the monsters and the party before you roll. Nothing is
+              locked until combat begins.
             </p>
           </div>
           <Pill kind="draft" className="px-3.5 py-[7px] text-xs" />
@@ -222,20 +289,31 @@ export function EncounterSetupPage() {
           <>
             <div className="grid grid-cols-1 gap-[22px] min-[761px]:grid-cols-2">
               <MonsterPanel encounter={encounter.data} />
-              <PartyPanel encounter={encounter.data} roster={roster.data ?? []} />
+              <PartyPanel
+                encounter={encounter.data}
+                roster={roster.data ?? []}
+              />
             </div>
 
             <div className="mt-[26px] flex flex-wrap items-center justify-between gap-[18px] rounded-card border border-line-2 bg-linear-to-b from-surface to-bg-2 px-6 py-5">
               <div className="text-sm text-muted">
-                <b className="font-mono text-fg">{encounter.data.monsters.length}</b> monsters and{' '}
-                <b className="font-mono text-fg">{encounter.data.pcs.length}</b> heroes staged.{' '}
-                {ready ? 'Ready when you are.' : 'You need at least one monster and one hero.'}
+                <b className="font-mono text-fg">
+                  {encounter.data.monsters.length}
+                </b>{' '}
+                monsters and{' '}
+                <b className="font-mono text-fg">{encounter.data.pcs.length}</b>{' '}
+                heroes staged.{' '}
+                {ready
+                  ? 'Ready when you are.'
+                  : 'You need at least one monster and one hero.'}
               </div>
               <Button
                 variant="primary"
                 size="lg"
                 disabled={!ready}
-                onClick={() => navigate(`/encounters/${encounterId}/initiative`)}
+                onClick={() =>
+                  navigate(`/encounters/${encounterId}/initiative`)
+                }
               >
                 Start encounter
                 <ArrowRight className="size-[1.2em]" />

@@ -7,7 +7,8 @@ export function RequireAuth() {
   useEffect(() => {
     const onUnauthorized = () => navigate('/login', { replace: true })
     window.addEventListener('dicefight:unauthorized', onUnauthorized)
-    return () => window.removeEventListener('dicefight:unauthorized', onUnauthorized)
+    return () =>
+      window.removeEventListener('dicefight:unauthorized', onUnauthorized)
   }, [navigate])
   if (!getUsername()) return <Navigate to="/login" replace />
   return <Outlet />

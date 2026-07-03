@@ -9,7 +9,9 @@ import { Panel } from '../../components/Panel'
 import { TopBar } from '../../components/TopBar'
 import { useCampaigns, useCreateCampaign } from './queries'
 
-const newCampaignSchema = z.object({ name: z.string().trim().min(1, 'Name is required') })
+const newCampaignSchema = z.object({
+  name: z.string().trim().min(1, 'Name is required'),
+})
 type NewCampaignForm = z.infer<typeof newCampaignSchema>
 
 function NewCampaignTile() {
@@ -24,7 +26,9 @@ function NewCampaignTile() {
   return (
     <form
       className="flex min-h-[168px] flex-col justify-center gap-3 rounded-card border border-dashed border-line-2 bg-transparent p-[22px] transition hover:border-accent"
-      onSubmit={handleSubmit((form) => createCampaign.mutate(form.name, { onSuccess: () => reset() }))}
+      onSubmit={handleSubmit((form) =>
+        createCampaign.mutate(form.name, { onSuccess: () => reset() }),
+      )}
     >
       <div className="flex items-center gap-[9px] font-display text-base font-semibold tracking-[0.02em] text-accent">
         <Plus className="size-[1.2em]" />
@@ -38,12 +42,20 @@ function NewCampaignTile() {
           className={`${inputClass} px-3 py-2.5 text-sm`}
           {...register('name')}
         />
-        {errors.name && <p className="text-[12.5px] text-monster">{errors.name.message}</p>}
+        {errors.name && (
+          <p className="text-[12.5px] text-monster">{errors.name.message}</p>
+        )}
         {createCampaign.isError && (
-          <p className="text-[12.5px] text-monster">{createCampaign.error.message}</p>
+          <p className="text-[12.5px] text-monster">
+            {createCampaign.error.message}
+          </p>
         )}
       </div>
-      <Button variant="primary" type="submit" disabled={createCampaign.isPending}>
+      <Button
+        variant="primary"
+        type="submit"
+        disabled={createCampaign.isPending}
+      >
         Forge it
       </Button>
     </form>
@@ -59,7 +71,9 @@ export function CampaignsPage() {
       <main className="mx-auto max-w-[1180px] px-[clamp(16px,4vw,40px)] pt-[clamp(26px,5vw,52px)] pb-20">
         <div className="mb-[30px] flex flex-wrap items-end justify-between gap-[22px]">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Your table</div>
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+              Your table
+            </div>
             <h1 className="font-display text-[clamp(28px,4.4vw,44px)] leading-[1.05] font-semibold tracking-[0.01em] text-fg">
               Campaigns
             </h1>
@@ -69,7 +83,9 @@ export function CampaignsPage() {
           </div>
         </div>
 
-        {campaigns.isPending && <p className="text-muted">Summoning your campaigns…</p>}
+        {campaigns.isPending && (
+          <p className="text-muted">Summoning your campaigns…</p>
+        )}
         {campaigns.isError && (
           <Panel title="Something went wrong">
             <p className="mb-4 text-sm text-muted">{campaigns.error.message}</p>

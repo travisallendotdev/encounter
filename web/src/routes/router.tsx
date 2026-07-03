@@ -15,8 +15,14 @@ export function AppRoutes() {
         <Route element={<RequireAuth />}>
           <Route path="/campaigns" element={<CampaignsPage />} />
           <Route path="/campaigns/:id" element={<CampaignDetailPage />} />
-          <Route path="/campaigns/:id/encounters/:eid/setup" element={<EncounterSetupPage />} />
-          <Route path="/encounters/:eid/initiative" element={<InitiativePage />} />
+          <Route
+            path="/campaigns/:id/encounters/:eid/setup"
+            element={<EncounterSetupPage />}
+          />
+          <Route
+            path="/encounters/:eid/initiative"
+            element={<InitiativePage />}
+          />
           <Route path="/encounters/:eid/combat" element={<CombatPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/campaigns" replace />} />

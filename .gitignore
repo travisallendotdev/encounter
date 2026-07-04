@@ -44,5 +44,5 @@ prd.json
 progress.txt
 .last-branch
 
-# Archive is optional to commit
-archive/web/tsconfig.tsbuildinfo
+# TypeScript incremental build cache
+*.tsbuildinfo

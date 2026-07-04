@@ -45,4 +45,4 @@ progress.txt
 .last-branch
 
 # Archive is optional to commit
-archive/
+archive/web/tsconfig.tsbuildinfo
